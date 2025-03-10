@@ -1,0 +1,20 @@
+# Ignore Go build artifacts
+/bin/
+/obj/
+/build/
+
+# Ignore compiled Go binaries
+*.exe
+*.out
+*.test
+
+# Operating system-specific files
+.DS_Store
+Thumbs.db
+
+# Go specific caches
+.golangci-lint.cache/
+.coverage
+
+# Ignore binaries
+/day??/day??
