@@ -29,7 +29,7 @@ func abs(val int) int {
 func main() {
     listOne := []int{}
     listTwo := []int{}
-    for _, numLine := range strings.Split(input, "\n") {
+    for numLine := range strings.SplitSeq(input, "\n") {
         splitNums := strings.Fields(numLine)
 
         numOne, err := strconv.Atoi(splitNums[0])
@@ -65,7 +65,7 @@ func partTwo() int {
     listOne := []int{}
     setTwo := make(map[int]int)
 
-    for _, numLine := range strings.Split(input, "\n") {
+    for numLine := range strings.SplitSeq(input, "\n") {
         splitNums := strings.Fields(numLine)
 
         numOne, err := strconv.Atoi(splitNums[0])
