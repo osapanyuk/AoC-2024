@@ -57,4 +57,46 @@ func main() {
     }
 
     fmt.Println("The distance is ", diff)
+
+    fmt.Println(partTwo())
+}
+
+func partTwo() int {
+    listOne := []int{}
+    setTwo := make(map[int]int)
+
+    for _, numLine := range strings.Split(input, "\n") {
+        splitNums := strings.Fields(numLine)
+
+        numOne, err := strconv.Atoi(splitNums[0])
+        if err != nil {
+            log.Fatal("Input file contains non-numerical values")
+        }
+
+        listOne = append(listOne, numOne)
+
+        numTwo, err := strconv.Atoi(splitNums[1])
+        if err != nil {
+            log.Fatal("Input file contains non-numerical values")
+        }
+
+        _, ok := setTwo[numTwo]
+        if !ok {
+            setTwo[numTwo] = 1
+        } else {
+            setTwo[numTwo]++
+        }
+    }
+
+    sum := 0
+
+    for _, num := range listOne {
+        count, ok := setTwo[num]
+        if !ok {
+            continue
+        }
+        sum += count * num
+    }
+
+    return sum
 }
