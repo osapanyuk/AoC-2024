@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+    "flag"
     "fmt"
 	"log"
     "sort"
@@ -27,9 +28,32 @@ func abs(val int) int {
 }
 
 func main() {
+    part := flag.Int(
+        "part",
+        0,
+        "Specifies the section of code to run. 1 for part1, 2 for part2",
+    )
+
+    flag.Parse()
+
+    result := 0
+    switch *part {
+    case 1:
+        result = partOne(&input)
+    case 2:
+        result = partTwo(&input)
+    default:
+        log.Fatal("'Part' argument out of supported range, needs to be either '1' or '2'")
+    }
+
+    fmt.Println("The distance is", result)
+}
+
+func partOne(input *string) int {
     listOne := []int{}
     listTwo := []int{}
-    for numLine := range strings.SplitSeq(input, "\n") {
+
+    for numLine := range strings.SplitSeq(*input, "\n") {
         splitNums := strings.Fields(numLine)
 
         numOne, err := strconv.Atoi(splitNums[0])
@@ -56,16 +80,14 @@ func main() {
         diff += abs(listOne[i] - listTwo[i])
     }
 
-    fmt.Println("The distance is ", diff)
-
-    fmt.Println(partTwo())
+    return diff
 }
 
-func partTwo() int {
+func partTwo(input *string) int {
     listOne := []int{}
     setTwo := make(map[int]int)
 
-    for numLine := range strings.SplitSeq(input, "\n") {
+    for numLine := range strings.SplitSeq(*input, "\n") {
         splitNums := strings.Fields(numLine)
 
         numOne, err := strconv.Atoi(splitNums[0])
