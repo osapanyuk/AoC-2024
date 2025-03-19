@@ -39,8 +39,10 @@ func main() {
     result := 0
     switch *part {
     case 1:
+        fmt.Println("Executing Part 1")
         result = partOne(&input)
     case 2:
+        fmt.Println("Executing Part 2")
         result = partTwo(&input)
     default:
         log.Fatal("'Part' argument out of supported range, needs to be either '1' or '2'")
@@ -59,27 +61,7 @@ func partOne(input *string) int {
             log.Fatal(err)
         }
 
-        isIncrementing := reportList[0] < reportList[1]
-        isUnsafe := false
-
-        for i:= 1; i < len(reportList); i++ {
-            if isIncrementing && reportList[i - 1] > reportList[i] {
-                isUnsafe = true
-                break
-            } else if !isIncrementing && reportList[i - 1] < reportList[i] {
-                isUnsafe = true
-                break
-            }
-
-            diff := abs(reportList[i - 1] - reportList[i])
-
-            if diff > 3 || diff < 1 {
-                isUnsafe = true
-                break
-            }
-        }
-
-        if !isUnsafe {
+        if index := validateRow(reportList); index == 0 {
             count++
         }
     }
@@ -98,25 +80,26 @@ func partTwo(input *string) int {
 
         isUnsafe := false
 
+        // If we have an invalid row, re-validate the row by removing a single value
         if index := validateRow(reportList); index != 0 {
             copyRow := make([]int, len(reportList))
             copy(copyRow, reportList)
 
-            copyRow2 := make([]int, len(reportList))
-            copy(copyRow2, reportList)
+            // Case 1: first value in the row is removed.
+            // This is done because the first two values define increment/decrement
+            subResult1 := validateRow(reportList[1:])
 
+            // Case 2: remove value at index
             reportList = slices.Delete(reportList, index, index + 1)
+
+            // Case 3: remove value at index - 1
             copyRow = slices.Delete(copyRow, index - 1, index)
 
-            // this does not work because if the incrementation does not work it will be found after we increment the index once.
-            subResult1 := validateRow(reportList)
-            subResult2 := validateRow(copyRow)
+            subResult2 := validateRow(reportList)
+            subResult3 := validateRow(copyRow)
 
-            if subResult1 != 0 && subResult2 != 0 {
-                // Made it work, but it is ugly, fix next iteration, it's late now
-                if subResult3 := validateRow(copyRow2[1:]); subResult3 != 0 {
-                    isUnsafe = true
-                }
+            if subResult1 != 0 && subResult2 != 0 && subResult3 != 0 {
+                isUnsafe = true
             }
         }
 
@@ -135,14 +118,14 @@ func parseReportRow(reportRow *string) ([]int, error) {
         num, err := strconv.Atoi(elem)
 
         if err != nil {
-            log.Fatal("Input file contains non-integer value")
+            return []int{}, fmt.Errorf("Input file contains non-integer value: %w", err)
         }
 
         reportList = append(reportList, num)
     }
 
     if len(reportList) < 2 {
-        log.Fatal("Input file is missing the minimum number of columns of 2")
+        return []int{}, fmt.Errorf("Input file is missing the minimum number of columns of 2")
     }
 
     return reportList, nil
